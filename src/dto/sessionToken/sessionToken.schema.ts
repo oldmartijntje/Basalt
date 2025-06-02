@@ -15,5 +15,10 @@ export const sessionTokenJsonSchema = {
         type: String,
         required: true,
         description: "'sessionToken' is required and is a string",
+    },
+    refreshToken: {
+        type: String,
+        required: true,
+        description: "'refreshToken' is required and is a string",
     }
 };

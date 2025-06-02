@@ -17,7 +17,7 @@ if (!MONGO_URI) {
     console.error("No MONGO_URI environment variable has been defined in config.env");
     process.exit(1);
 }
-// Function to load settings from a JSON file
+
 async function loadSettings(settingsPath: string) {
     try {
         const data = await fs.promises.readFile(settingsPath, 'utf8');
@@ -35,7 +35,6 @@ async function loadSettings(settingsPath: string) {
     }
 }
 
-// Main function to execute on startup
 async function main() {
     const settings = await loadSettings('settings.json');
 
@@ -44,23 +43,43 @@ async function main() {
     }
 }
 
-// Run the application on startup
 main().then(async () => {
     connectToDatabase(MONGO_URI).then(async () => {
         const settings = require('../settings.json');
         const port = settings.port || 3000;
         const staticHtmlPath = path.join(__dirname, '../docs');
         const app = express();
+
+        // set view engine to EJS
+        app.set('view engine', 'ejs');
+        app.set('views', path.join(__dirname, '../views'));
+
         app.use(cors());
-        app.use("/login", loginRouter);
+        app.use("/api/login", loginRouter);
         app.use(expressStatic(staticHtmlPath));
-        // start the Express server
+
+        registerPages(app);
+
         app.listen(port, () => {
             console.log(`Server running at http://localhost:${port}...`);
         });
+
         app.use((req, res) => {
-            res.status(404).sendFile(path.join(staticHtmlPath, '../docs/404.html'));
+            res.status(404).render('pages/404', { title: '404 Not Found' });
         });
     }).catch(error => console.error(error));
 
 }).catch(error => console.error(error));
+
+function registerPages(app: express.Express) {
+    registerEJS(app, 'pages/index', '/', { title: 'Home' });
+    registerEJS(app, 'pages/login', '/login', { title: 'Login' });
+    registerEJS(app, 'pages/register', '/register', { title: 'Register' });
+    registerEJS(app, 'pages/dashboard', '/dashboard', { title: 'Dashboard' });
+}
+
+function registerEJS(app: express.Express, folderPath: string, browserPath: string, options?: object) {
+    app.get(browserPath, (req, res) => {
+        res.render(folderPath, options);
+    });
+}

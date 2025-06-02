@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('../components/technical/head') %>
+</head>
+
+<body>
+    <%- include('../components/default/header') %>
+
+        <div class="main-container">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-12">
+                        <div class="site-card info-card">
+                            <div class="logo">
+                                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="50" cy="50" r="45" fill="var(--primary)" />
+                                    <text x="50%" y="50%" text-anchor="middle" dominant-baseline="central"
+                                        font-size="40">
+                                        🎲
+                                    </text>
+                                </svg>
+                                <div class="brand-name">Board Game Statistics Tracker</div>
+                            </div>
+
+                            <div class="info-text">
+                                <!-- <h2 class="text-center mb-4">Keep Your Game Collection Organized</h2> -->
+
+                                <p>
+                                    Track your board game collection, plays, and scores with this easy-to-use web tool.
+                                    View
+                                    comprehensive
+                                    statistics and insightful graphs for your games, plays, and all players.
+                                </p>
+
+                                <p>
+                                    This web app was born out of necessity. When I stopped using a smartphone, I
+                                    encountered
+                                    a problem:
+                                    how to continue tracking my board game statistics? The excellent
+                                    <a href="https://www.bgstatsapp.com/" target="_blank">Board Game Stats mobile
+                                        app</a>
+                                    allows you to export plays, which you can import here, and vice versa.
+                                </p>
+
+                                <p>
+                                    <strong>Note:</strong> This project is not affiliated with the Board Game Stats
+                                    team,
+                                    nor is it monetized in any way. If you're a mobile user, I highly recommend trying
+                                    their excellent app first. This alternative is specifically designed for those who
+                                    prefer
+                                    a desktop or web-based solution.
+                                </p>
+
+                                <h3 class="mt-4">Key Features</h3>
+                                <ul>
+                                    <li>Import and export compatibility with Board Game Stats app</li>
+                                    <li>Detailed statistics and visualizations</li>
+                                    <li>Player performance tracking</li>
+                                    <li>Game collection management</li>
+                                    <li>Self-hosted solution for privacy</li>
+                                </ul>
+
+                                <h3 class="mt-4">Technical Details</h3>
+                                <p>
+                                    This application is built with Node.js/TypeScript and MongoDB, which can run either
+                                    locally
+                                    or hosted on a server. It includes a login system to keep your data secure when
+                                    hosted.
+                                    Best of all, it's completely <a
+                                        href="https://github.com/oldmartijntje/board-game-statistics"
+                                        target="_blank">open
+                                        source</a>,
+                                    so you can customize it or add your own features.
+                                </p>
+
+                                <div class="mt-5 d-flex justify-content-center gap-3">
+                                    <a href="/login" class="btn btn-primary">Go to Login</a>
+                                    <a href="https://github.com/oldmartijntje/board-game-statistics" target="_blank"
+                                        class="btn btn-outline-light">View on GitHub</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="/helperMethods.js"></script>
+        <script src="/loginscript.js"></script>
+
+        <%- include('../components/technical/bootstrapAndTracking') %>
+</body>
+
+</html>

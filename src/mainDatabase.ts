@@ -18,4 +18,4 @@ export const users = mongoose.model('user', userSchema);
 export async function connectToDatabase(uri: string) {
     const mongoose = require('mongoose');
     await mongoose.connect(uri);
-}
+} 

@@ -28,7 +28,7 @@ loginRouter.post("/", async (_req, res) => {
         const sessionToken = auth.getSessionToken();
 
         if (sessionToken) {
-            res.status(200).send({ message: "Logged in succesfully", sessionToken: sessionToken });
+            res.status(200).send({ message: "Logged in succesfully", sessionToken: sessionToken.sessionToken, refreshToken: sessionToken.refreshToken });
             return;
         }
         res.status(501).send({ "message": "Unexpected logic escape: How did this occur?" });
@@ -80,13 +80,37 @@ loginRouter.post("/validateToken", async (_req, res) => {
             return;
         }
         const auth = new Authenticator();
-        const authenticationResponse = await auth.authenticateBySessionToken(username, sessionToken);
+        const authenticationResponse = await auth.authenticateBySessionToken(username, sessionToken, false);
         if (!authenticationResponse) {
-            res.status(403).send({ "message": "Invalid SessionToken and username combination" });
+            res.status(403).send({ "message": "Invalid SessionToken and username combination." });
             return;
         }
 
         res.status(200).send({ "message": "Login Successfull." })
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+});
+
+/**
+ * refresh the sessiontoken with a refresh token
+ */
+loginRouter.post("/refreshToken", async (_req, res) => {
+    try {
+        const username = _req.body.username;
+        const refreshToken = _req.body.refreshToken;
+        if (!refreshToken || !username) {
+            res.status(400).send({ "message": "RefreshToken and username are required" });
+            return;
+        }
+        const auth = new Authenticator();
+        const authenticationResponse = await auth.refreshSessionToken(username, refreshToken);
+        if (!authenticationResponse) {
+            res.status(403).send({ "message": "Invalid refreshToken and username combination" });
+            return;
+        }
+
+        res.status(200).send({ message: "Token Refreshed Successfully", sessionToken: authenticationResponse.sessionToken, refreshToken: authenticationResponse.refreshToken })
     } catch (error) {
         res.status(500).send(error.message);
     }

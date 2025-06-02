@@ -5,4 +5,5 @@ export interface SessionTokenInterface {
     userId: mongodb.ObjectId;
     expirationDate: Date;
     sessionToken: string;
+    refreshToken: string;
 }

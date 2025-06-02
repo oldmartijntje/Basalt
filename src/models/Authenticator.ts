@@ -4,9 +4,10 @@ import { compare } from 'bcrypt';
 import * as mongodb from "mongodb";
 import { promises } from "dns";
 import { UuidHelper } from "./UuidHelper";
+import { SessionTokenInterface } from "../dto/sessionToken/sessionToken.interface";
 
 export class Authenticator {
-    private sessionToken: string | undefined;
+    private sessionToken: SessionTokenInterface | undefined;
     private isAuthenticated: boolean;
     private user: UserInterface | undefined;
     private readonly sessiontokenExpireTime: number = 1; // in hours
@@ -23,22 +24,46 @@ export class Authenticator {
         this.isAuthenticated = true;
     }
 
-    async createUser(username: string, password: string): Promise<boolean> {
+    public async createUser(username: string, password: string): Promise<boolean> {
         const user = await users.findOne({ username: username }).lean();
         if (user) {
             return false;
         } else {
             const newUser = await users.create({ username: username, password: password });
-            console.log(newUser)
             const passwordMatch = await compare(password, newUser.password);
-            console.log(passwordMatch, newUser.password)
             return true;
         }
     }
 
-    async authenticateBySessionToken(username: string, sessionTokenString: string): Promise<boolean> {
-        const validSessionToken = await this.validateSessionToken(username, sessionTokenString);
-        if (typeof validSessionToken === "string" || validSessionToken === false) {
+    public async refreshSessionToken(username: string, refreshToken: string): Promise<SessionTokenInterface | undefined> {
+        const validRefreshToken = await this.validateRefreshToken(username, refreshToken);
+        this.unAuthorise();
+        if (validRefreshToken == undefined) {
+            return;
+        } else {
+            const userId = await this.getUserIdBySessionToken(validRefreshToken.sessionToken);
+            if (!userId) {
+                return;
+            }
+            const user = await users.findOne({ _id: new mongodb.ObjectId(userId) }).lean();
+            if (user) {
+                this.sessionToken = await this.getSessionTokenDataByString(validRefreshToken.sessionToken);
+                this.user = user;
+                return await this.createSessionToken();
+            } else {
+                return;
+            }
+        }
+    }
+
+    private async getSessionTokenDataByString(sessionTokenString: string): Promise<SessionTokenInterface> {
+        const sessionToken = await sessionTokens.findOne({ sessionToken: sessionTokenString }).lean();
+        return sessionToken;
+    }
+
+    public async authenticateBySessionToken(username: string, sessionTokenString: string, deleteWhenExpired: boolean = true): Promise<boolean> {
+        const validSessionToken = await this.validateSessionToken(username, sessionTokenString, deleteWhenExpired);
+        if (validSessionToken === false) {
             this.unAuthorise();
             return false;
         }
@@ -49,7 +74,7 @@ export class Authenticator {
         }
         const user = await users.findOne({ _id: new mongodb.ObjectId(userId) }).lean();
         if (user) {
-            this.sessionToken = sessionTokenString;
+            this.sessionToken = await this.getSessionTokenDataByString(sessionTokenString);
             this.user = user;
             this.authorise();
             return true;
@@ -59,7 +84,7 @@ export class Authenticator {
         }
     }
 
-    async authenticateByLogin(username: string, password: string): Promise<boolean> {
+    public async authenticateByLogin(username: string, password: string): Promise<boolean> {
         const user = await users.findOne({ username: username }).lean();
         if (!user) {
             this.unAuthorise();
@@ -77,11 +102,11 @@ export class Authenticator {
         return true;
     }
 
-    isAuthorised() {
+    public isAuthorised() {
         return this.isAuthenticated;
     }
 
-    getUserData(): UserInterface | undefined {
+    public getUserData(): UserInterface | undefined {
         if (!this.user) {
             return;
         }
@@ -90,11 +115,11 @@ export class Authenticator {
         return user;
     }
 
-    getSessionToken(): string | undefined {
+    public getSessionToken(): SessionTokenInterface | undefined {
         return this.sessionToken;
     }
 
-    private async createSessionToken(): Promise<string | undefined> {
+    private async createSessionToken(): Promise<SessionTokenInterface | undefined> {
         if (!this.user) {
             return;
         }
@@ -105,18 +130,20 @@ export class Authenticator {
             await this.removeAllSessionTokens();
         }
         const token = UuidHelper.generateUUID();
-        const sessionToken = await sessionTokens.create({ userId: this.user._id, expirationDate: expirationDate, sessionToken: token });
-        sessionToken.save();
-        return token;
+        const refreshToken = UuidHelper.generateUUID();
+        const sessionToken = await sessionTokens.create({ userId: this.user._id, expirationDate: expirationDate, sessionToken: token, refreshToken: refreshToken });
+        return sessionToken;
     }
 
-    private async validateSessionToken(username: string, sessionToken: string): Promise<boolean | string> {
+    private async validateSessionToken(username: string, sessionToken: string, deleteWhenExpired: boolean): Promise<boolean> {
         const sessionTokenObject = await sessionTokens.findOne({ sessionToken: sessionToken }).lean();
         if (!sessionTokenObject) {
             return false;
         }
         if (sessionTokenObject.expirationDate < new Date()) {
-            await this.removeSessionToken(sessionToken);
+            if (deleteWhenExpired) {
+                await this.removeSessionToken(sessionToken);
+            }
             return false;
         }
         const user = await users.findOne({ _id: sessionTokenObject.userId }).lean();
@@ -127,6 +154,21 @@ export class Authenticator {
             return false;
         }
         return true;
+    }
+
+    private async validateRefreshToken(username: string, refreshToken: string): Promise<undefined | SessionTokenInterface> {
+        const refreshTokenObject = await sessionTokens.findOne({ refreshToken: refreshToken }).lean();
+        if (!refreshTokenObject) {
+            return;
+        }
+        const user = await users.findOne({ _id: refreshTokenObject.userId }).lean();
+        if (!user) {
+            return;
+        }
+        if (user.username != username) {
+            return;
+        }
+        return refreshTokenObject;
     }
 
     private async removeSessionToken(sessionToken: string): Promise<boolean> {
