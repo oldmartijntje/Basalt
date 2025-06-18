@@ -1,4 +1,4 @@
-# diagonal-dinosour
+# diagonal-dinosaur
 NodeTS EJS Mongodb webapp Template📋
 
 This requires you either one of the followig:
