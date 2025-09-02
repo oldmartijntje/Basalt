@@ -1,5 +1,10 @@
-# diagonal-dinosaur
-NodeTS EJS Mongodb webapp Template📋
+# Basalt
+
+This github repo is a NodeJs + Mongodb api. It is for loading markdown from a Mongodb database as an API.
+
+It is focussed on security, you can make certain notes only show up whenever a user has clearence to read that part.
+
+It will require a personal way to sync your obsidian markdown notes into mongodb, but I'll probably be making that as well in the future.
 
 This requires you either one of the followig:
 - You run mongodb locally
