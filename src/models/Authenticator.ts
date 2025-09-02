@@ -28,11 +28,19 @@ export class Authenticator {
         const user = await users.findOne({ username: username }).lean();
         if (user) {
             return false;
-        } else {
-            const newUser = await users.create({ username: username, password: password });
-            const passwordMatch = await compare(password, newUser.password);
-            return true;
         }
+        const userCount = await users.countDocuments({});
+
+        // If this is the first user, assign ["#"], else empty list
+        const accessIdentifiers = userCount === 0 ? ["#"] : [];
+
+        const newUser = await users.create({
+            username: username,
+            password: password,
+            accessIdentifiers: accessIdentifiers
+        });
+
+        return true;
     }
 
     public async refreshSessionToken(username: string, refreshToken: string): Promise<SessionTokenInterface | undefined> {
