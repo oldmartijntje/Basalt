@@ -10,7 +10,7 @@ This requires you either one of the followig:
 
 Run `npm i` in the root folder, this installs all packages.
 
-Then we run `npm run setup` in that root folder, this gives you steps with thingss you have to walk through. My default local hosted mongodb conn string is `mongodb://localhost:27017/BG_STATS_WEB`, but my hosted conn string looks like `mongodb://<username>:<password>@<ipadress>:<port>`. Make sure you find your correct conn string.
+Then we run `npm run setup` in that root folder, this gives you steps with thingss you have to walk through. My default local hosted mongodb conn string is `mongodb://localhost:27017/DIAGONAL_DINOSAUR`, but my hosted conn string looks like `mongodb://<username>:<password>@<ipadress>:<port>`. Make sure you find your correct conn string.
 
 ## Running
 

@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const inquirer = require('inquirer');
 
-const DEFAULT_URI = 'mongodb://localhost:27017/BG_STATS_WEB';
+const DEFAULT_URI = 'mongodb://localhost:27017/DIAGONAL_DINOSAUR';
 
 (async function () {
     try {
