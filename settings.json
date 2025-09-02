@@ -1,3 +1,5 @@
 {
-  "port": 4242
+  "port": 4242,
+  "accountCreationMethod": "GUI",
+  "alsoAllowPostAccountCreation": "DISABLEw"
 }

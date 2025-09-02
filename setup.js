@@ -49,6 +49,21 @@ const DEFAULT_URI = 'mongodb://localhost:27017/DIAGONAL_DINOSAUR';
             }
         }]);
 
+        const { accountCreation } = await inquirer.prompt([{
+            type: 'list',
+            name: 'accountCreation',
+            message: 'Select mode for account creation:',
+            choices: ['1.The POST Method', '2.Modern UI'],
+        }]);
+
+        const { uiAccountCreation } = await inquirer.prompt([{
+            type: 'list',
+            name: 'uiAccountCreation',
+            message: 'Allow the (old) POST method for account creation as well?',
+            when: () => portChoice === 'custom',
+            choices: ['ALLOW', 'DISABLE'],
+        }]);
+
         const finalPort = portChoice === 'custom' ? customPort : portChoice;
 
         // .env
@@ -57,7 +72,11 @@ const DEFAULT_URI = 'mongodb://localhost:27017/DIAGONAL_DINOSAUR';
         console.log('.env file created');
 
         //settings.json
-        const settings = { port: parseInt(finalPort, 10) };
+        const settings = {
+            port: parseInt(finalPort, 10),
+            accountCreationMethod: accountCreation == "1.The POST Method" ? "POST": "GUI",
+            alsoAllowPostAccountCreation: uiAccountCreation ?? null
+        };
         fs.writeFileSync(
             path.resolve(process.cwd(), 'settings.json'),
             JSON.stringify(settings, null, 2)

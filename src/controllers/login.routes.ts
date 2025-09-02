@@ -4,9 +4,14 @@ import { UuidHelper } from "../models/UuidHelper"
 
 export const loginRouter = express.Router();
 loginRouter.use(express.json());
+const settings = require('../../settings.json');
 
 const passkey = UuidHelper.generateUUID();
-console.log(`Admin key: ${passkey}`);
+if (!(settings.accountCreationMethod == "GUI" && settings.alsoAllowPostAccountCreation == "DISABLE")) {
+    console.log(`Admin key: ${passkey}`);
+} else {
+    console.log(`POST Method: Disabled`);
+}
 
 /**
  * Get the sessiontoken by using your password and username
@@ -42,6 +47,10 @@ loginRouter.post("/", async (_req, res) => {
  */
 loginRouter.post("/register", async (_req, res) => {
     try {
+        if (settings.accountCreationMethod == "GUI" && settings.alsoAllowPostAccountCreation == "DISABLE") {
+            res.status(400).send({ "message": "This is disabled" });
+            return;
+        }
         const auth = new Authenticator();
         const username = _req.body.username;
         const password = _req.body.password;
