@@ -16,9 +16,9 @@ export const userJsonSchema = {
         required: false,
         description: "'email' is optional and is a string",
     },
-    role: {
-        type: String,
-        required: false,
-        description: "'role' is optional and is a string",
+    accessIdentifiers: {
+        type: [String],  // list of strings
+        required: true,
+        description: "'accessIdentifiers' is optional and is a list of strings",
     }
 };
