@@ -61,6 +61,7 @@ async function promptAccountCreation() {
         choices: ['POST Method', 'Modern UI'],
     }]);
     let alsoAllowPost = null;
+    let unlimitedUserCreation = true;
     if (accountCreation === 'Modern UI') {
         const { uiAccountCreation } = await inquirer.prompt([{
             type: 'list',
@@ -69,8 +70,19 @@ async function promptAccountCreation() {
             choices: ['ALLOW', 'DISABLE'],
         }]);
         alsoAllowPost = uiAccountCreation;
+
+        const { unlimited } = await inquirer.prompt([{
+            type: 'list',
+            name: 'unlimited',
+            message: 'How many users can sign up through the UI?',
+            choices: [
+                { name: 'Unlimited (anyone can register)', value: true },
+                { name: 'Single user only (only the first user can register)', value: false }
+            ]
+        }]);
+        unlimitedUserCreation = unlimited;
     }
-    return { accountCreation, alsoAllowPost };
+    return { accountCreation, alsoAllowPost, unlimitedUserCreation };
 }
 
 async function promptAdminAccount() {
@@ -150,7 +162,8 @@ async function main() {
         const settings = {
             port: parseInt(finalPort, 10),
             accountCreationMethod: accountSettings.accountCreation === 'POST Method' ? 'POST' : 'GUI',
-            alsoAllowPostAccountCreation: accountSettings.alsoAllowPost ?? null
+            alsoAllowPostAccountCreation: accountSettings.alsoAllowPost ?? null,
+            unlimitedUserCreation: accountSettings.unlimitedUserCreation ?? true
         };
         fs.writeFileSync(
             path.resolve(process.cwd(), 'settings.json'),
