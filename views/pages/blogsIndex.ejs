@@ -1,0 +1,24 @@
+<%- include('../partials/header') %>
+
+    <main>
+        <h1>Blogs</h1>
+        <ul>
+            <% blogs.forEach(b=> { %>
+                <li>
+                    <a href="/blogs/<%= b.slug %>">
+                        <%= b.title %>
+                    </a>
+                    <small>by <%= b.authorName || 'Unknown' %> — <%= new Date(b.createdAt).toLocaleDateString() %>
+                                </small>
+                </li>
+                <% }) %>
+        </ul>
+
+        <% if (user) { %>
+            <p>Hi <%= user.username || user.name %> — <a href="/blogs/new">Write a new blog</a></p>
+            <% } else { %>
+                <p><a href="/login">Log in</a> to write blogs.</p>
+                <% } %>
+    </main>
+
+    <%- include('../partials/footer') %>

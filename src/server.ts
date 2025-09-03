@@ -7,6 +7,7 @@ import { connectToDatabase } from "./mainDatabase";
 import { loginRouter } from "./controllers/login.routes";
 import { static as expressStatic } from 'express';
 import { getVersion } from './getVersion';
+import { registerBlogRoutes } from "./blogRoutes";
 
 // Load environment variables from the .env file, where the MONGO_URI is configured
 // my localhost .env: "MONGO_URI=mongodb://localhost:27017/BG_STATS_WEB"
@@ -50,6 +51,15 @@ main().then(async () => {
         const port = settings.port || 3000;
         const staticHtmlPath = path.join(__dirname, '../docs');
         const app = express();
+
+        app.use((req, res, next) => {
+            // If your loginRouter or auth sets req.user, expose it to templates:
+            res.locals.user = (req as any).user || null;
+            next();
+        });
+
+        registerBlogRoutes(app);
+
 
         // set view engine to EJS
         app.set('view engine', 'ejs');

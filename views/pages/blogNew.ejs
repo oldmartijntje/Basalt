@@ -1,0 +1,13 @@
+<%- include('../partials/header') %>
+
+    <main>
+        <h1>Write a new post</h1>
+
+        <form method="POST" action="/blogs">
+            <label>Title<br><input name="title" required></label>
+            <label>Markdown<br><textarea name="markdown" rows="12" required></textarea></label>
+            <button type="submit">Publish</button>
+        </form>
+    </main>
+
+    <%- include('../partials/footer') %>

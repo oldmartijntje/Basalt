@@ -1,0 +1,23 @@
+<%- include('../partials/header') %>
+
+    <main>
+        <article>
+            <h1>
+                <%= blog.title %>
+            </h1>
+            <p class="meta">By <%= blog.authorName || 'Unknown' %> — <%= new Date(blog.createdAt).toLocaleString() %>
+            </p>
+
+            <!-- Render sanitized HTML you passed in as htmlContent -->
+            <div class="content"><%- htmlContent %></div>
+        </article>
+
+        <% if (user) { %>
+            <aside>
+                <h3>Welcome back, <%= user.username || user.name %> 👋</h3>
+                <p><a href="/blogs/new">Create a post</a> | <a href="/dashboard">Dashboard</a></p>
+            </aside>
+            <% } %>
+    </main>
+
+    <%- include('../partials/footer') %>
