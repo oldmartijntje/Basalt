@@ -6,6 +6,7 @@ import express from "express";
 import { connectToDatabase } from "./mainDatabase";
 import { loginRouter } from "./controllers/login.routes";
 import { static as expressStatic } from 'express';
+import { getVersion } from './getVersion';
 
 // Load environment variables from the .env file, where the MONGO_URI is configured
 // my localhost .env: "MONGO_URI=mongodb://localhost:27017/BG_STATS_WEB"
@@ -110,9 +111,10 @@ function registerPages(app: express.Express) {
         res.redirect('/dashboard/home');
     });
     // Main dashboard shell (EJS)
-    registerEJS(app, 'pages/dashboard', '/dashboard/home', { title: 'Dashboard' });
-    registerEJS(app, 'pages/dashboard', '/dashboard/template', { title: 'Dashboard' });
-    registerEJS(app, 'pages/dashboard', '/dashboard/users', { title: 'Dashboard' });
+    app.get(['/dashboard/home', '/dashboard/template', '/dashboard/users'], async (req, res) => {
+        const version = await getVersion();
+        res.render('pages/dashboard', { title: 'Dashboard', version });
+    });
     registerEJS(app, 'pages/register-success', '/register-success', { title: 'Account Created' });
 
     // Dashboard tab content routes (for SPA sidebar)
