@@ -51,9 +51,6 @@ main().then(async () => {
         const staticHtmlPath = path.join(__dirname, '../docs');
         const app = express();
 
-        app.set('view engine', 'ejs');
-        app.set('views', path.join(__dirname, '../views'));
-
         if (settings.logging != false) {
             const { requestLogger } = require('./requestLogger');
             app.use(requestLogger);
