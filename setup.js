@@ -111,17 +111,46 @@ async function main() {
         const finalPort = await promptPort();
         const accountSettings = await promptAccountCreation();
         const adminAccount = await promptAdminAccount();
+
         // .env
         let envContent = `MONGO_URI=${finalUri}\nPORT=${finalPort}\n`;
         fs.writeFileSync(path.resolve(process.cwd(), '.env'), envContent);
         console.log('.env file created');
 
+        // Insert admin into DB if requested
+        if (adminAccount) {
+            // Dynamically import mongoose and define schema inline
+            const mongoose = (await import('mongoose')).default;
+            const userJsonSchema = {
+                username: { type: String, required: true },
+                password: { type: String, required: true },
+                email: { type: String, required: false },
+                accessIdentifiers: { type: [String], required: true }
+            };
+            const userSchema = new mongoose.Schema(userJsonSchema);
+            const User = mongoose.model('user', userSchema);
+            await mongoose.connect(finalUri);
+            const userCount = await User.countDocuments({});
+            const accessIdentifiers = userCount === 0 ? ['#'] : [];
+            const exists = await User.findOne({ username: adminAccount.username });
+            if (exists) {
+                console.log(`Admin user '${adminAccount.username}' already exists in database.`);
+            } else {
+                await User.create({
+                    username: adminAccount.username,
+                    password: adminAccount.hashedPassword,
+                    accessIdentifiers
+                });
+                console.log(`Admin user '${adminAccount.username}' created in database.`);
+            }
+            await mongoose.disconnect();
+        }
+
         // settings.json
         const settings = {
             port: parseInt(finalPort, 10),
             accountCreationMethod: accountSettings.accountCreation === 'POST Method' ? 'POST' : 'GUI',
-            alsoAllowPostAccountCreation: accountSettings.alsoAllowPost ?? null,
-            adminAccount
+            alsoAllowPostAccountCreation: accountSettings.alsoAllowPost ?? null
         };
         fs.writeFileSync(
             path.resolve(process.cwd(), 'settings.json'),
@@ -133,6 +162,5 @@ async function main() {
         process.exit(1);
     }
 }
-
 
 main();

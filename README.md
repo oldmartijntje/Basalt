@@ -41,6 +41,10 @@ All users created after the 1st will have a lower access level.
 
 When choosing this mode of registering users, you can still use the old way, but those accounts will all have a lower access level. (unless blocked.)
 
+### 3. the third method
+
+This method will be prompted after selecting 1 of the above, it will prompt you whether you want to create a default admin. If you only want 1 account registered, ever: choose method 2 with the option of single admin.
+
 ## Running
 
 run `npx ts-node src/server.ts` to start the backend. The console will give you the port the front-end is on. This port can be changed via the `settings.json`
