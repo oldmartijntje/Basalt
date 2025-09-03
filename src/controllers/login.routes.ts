@@ -1,10 +1,15 @@
-import * as express from "express";
+
+import express from "express";
 import { Authenticator } from "../models/Authenticator";
-import { UuidHelper } from "../models/UuidHelper"
+import { UuidHelper } from "../models/UuidHelper";
+import fs from "fs";
+import { users } from "../mainDatabase";
 
 export const loginRouter = express.Router();
 loginRouter.use(express.json());
-const settings = require('../../settings.json');
+import path from "path";
+const settingsPath = path.resolve(process.cwd(), "settings.json");
+const settings = JSON.parse(fs.readFileSync(settingsPath, "utf8"));
 
 const passkey = UuidHelper.generateUUID();
 if (!(settings.accountCreationMethod == "GUI" && settings.alsoAllowPostAccountCreation == "DISABLE")) {
@@ -50,6 +55,20 @@ loginRouter.post("/register", async (_req, res) => {
         if (settings.accountCreationMethod == "GUI" && settings.alsoAllowPostAccountCreation == "DISABLE") {
             res.status(400).send({ "message": "This is disabled" });
             return;
+        }
+        if (settings.accountCreationMethod === "GUI" && settings.unlimitedUserCreation === false) {
+            // Only allow registration if there are no users yet
+            const auth = new Authenticator();
+            const userCount = await auth["constructor"].prototype["userCount"]?.() ?? undefined;
+            // fallback: count users from db
+            let count = userCount;
+            if (typeof count !== "number") {
+                count = await users.countDocuments({});
+            }
+            if (count > 0) {
+                res.status(400).send({ "message": "Only one user can register. Registration is closed." });
+                return;
+            }
         }
         const auth = new Authenticator();
         const username = _req.body.username;

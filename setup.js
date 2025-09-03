@@ -35,7 +35,7 @@ async function promptPort() {
         type: 'list',
         name: 'portChoice',
         message: 'Select port for web application:',
-        choices: ['4200', '3000', 'custom'],
+        choices: ['4200', '3000', '4242', 'custom'],
     }]);
     if (portChoice === 'custom') {
         const { customPort } = await inquirer.prompt([{
