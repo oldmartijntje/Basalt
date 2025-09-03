@@ -95,6 +95,48 @@ loginRouter.post("/register", async (_req, res) => {
         res.status(500).send({ "message": error.message });
     }
 });
+/**
+ * Open registration endpoint for UI login
+ * Allows anyone to register if UI login is enabled in settings
+ */
+loginRouter.post("/register/ui", async (_req, res) => {
+    try {
+        // Only allow if UI login is enabled in settings
+        if (!(settings.accountCreationMethod === "GUI")) {
+            res.status(403).send({ "message": "UI registration is not enabled." });
+            return;
+        }
+        const username = _req.body.username;
+        const password = _req.body.password;
+        const auth = new Authenticator();
+        if (settings.unlimitedUserCreation === false) {
+            // Only allow registration if there are no users yet
+            const userCount = await auth["constructor"].prototype["userCount"]?.() ?? undefined;
+            // fallback: count users from db
+            let count = userCount;
+            if (typeof count !== "number") {
+                count = await users.countDocuments({});
+            }
+            if (count > 0) {
+                res.status(400).send({ "message": "Only one user can register. Registration is closed." });
+                return;
+            }
+        }
+        if (!username || !password) {
+            res.status(400).send({ "message": "Username and password are required." });
+            return;
+        }
+        if (await auth.createUser(username, password)) {
+            res.status(200).send({ "message": "Account Created." });
+            return;
+        } else {
+            res.status(400).send({ "message": "User already exists." });
+            return;
+        }
+    } catch (error) {
+        res.status(500).send({ "message": error.message });
+    }
+});
 
 /**
  * check if your sessiontoken is valid.
