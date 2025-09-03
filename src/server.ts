@@ -6,6 +6,7 @@ import express from "express";
 import { connectToDatabase } from "./mainDatabase";
 import { loginRouter } from "./controllers/login.routes";
 import { static as expressStatic } from 'express';
+import { getVersion } from './getVersion';
 
 // Load environment variables from the .env file, where the MONGO_URI is configured
 // my localhost .env: "MONGO_URI=mongodb://localhost:27017/BG_STATS_WEB"
@@ -54,6 +55,11 @@ main().then(async () => {
         app.set('view engine', 'ejs');
         app.set('views', path.join(__dirname, '../views'));
 
+        if (settings.logging != false) {
+            const { requestLogger } = require('./requestLogger');
+            app.use(requestLogger);
+        }
+
         app.use(cors());
         app.use("/api/login", loginRouter);
         app.use(expressStatic(staticHtmlPath));
@@ -74,8 +80,58 @@ main().then(async () => {
 function registerPages(app: express.Express) {
     registerEJS(app, 'pages/index', '/', { title: 'Home' });
     registerEJS(app, 'pages/login', '/login', { title: 'Login' });
-    registerEJS(app, 'pages/register', '/register', { title: 'Register' });
-    registerEJS(app, 'pages/dashboard', '/dashboard', { title: 'Dashboard' });
+    // Custom register route logic
+    app.get('/register', async (req, res) => {
+        const settings = require('../settings.json');
+        const { accountCreationMethod, unlimitedUserCreation } = settings;
+        let userCount = 0;
+        try {
+            const { users } = require('./mainDatabase');
+            userCount = await users.countDocuments({});
+        } catch (err) {
+            userCount = 0;
+        }
+        if (accountCreationMethod === 'POST') {
+            // Show info only, no registration form
+            return res.render('pages/register', { mode: 'info', title: 'Register' });
+        }
+        if (accountCreationMethod === 'GUI' && unlimitedUserCreation === false) {
+            if (userCount === 0) {
+                // Show registration form
+                return res.render('pages/register', { mode: 'form', title: 'Register' });
+            } else {
+                // Registration closed
+                return res.render('pages/register', { mode: 'closed', title: 'Register' });
+            }
+        }
+        if (accountCreationMethod === 'GUI' && unlimitedUserCreation === true) {
+            // Always show registration form
+            return res.render('pages/register', { mode: 'form', title: 'Register' });
+        }
+        // Fallback: info
+        return res.render('pages/register', { mode: 'info', title: 'Register' });
+    });
+    // Redirect /dashboard to /dashboard/home
+    app.get('/dashboard', (req, res) => {
+        res.redirect('/dashboard/home');
+    });
+    // Main dashboard shell (EJS)
+    app.get(['/dashboard/home', '/dashboard/template', '/dashboard/users'], async (req, res) => {
+        const version = await getVersion();
+        res.render('pages/dashboard', { title: 'Dashboard', version });
+    });
+    registerEJS(app, 'pages/register-success', '/register-success', { title: 'Account Created' });
+
+    // Dashboard tab content routes (for SPA sidebar)
+    app.get('/dashboard/home-content', (req, res) => {
+        res.render('pages/dashboardHome');
+    });
+    app.get('/dashboard/template-content', (req, res) => {
+        res.render('pages/dashboardTemplate');
+    });
+    app.get('/dashboard/users-content', (req, res) => {
+        res.render('pages/dashboardUsers');
+    });
 }
 
 function registerEJS(app: express.Express, folderPath: string, browserPath: string, options?: object) {

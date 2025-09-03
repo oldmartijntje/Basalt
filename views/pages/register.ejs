@@ -8,54 +8,43 @@
 <body>
     <%- include('../components/default/header') %>
 
+
         <div class="main-container">
             <div class="container">
                 <div class="row justify-content-center">
                     <div class="col-12">
-                        <div class="site-card info-card">
-                            <div class="logo">
-                                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                                    <circle cx="50" cy="50" r="45" fill="var(--primary)" />
-                                    <text x="50%" y="50%" text-anchor="middle" dominant-baseline="central"
-                                        font-size="40">
-                                        🎲
-                                    </text>
-                                </svg>
-                                <div class="brand-name">About OldMa's Game Statistics</div>
+                        <% if (mode==='form' ) { %>
+                            <div class="site-card info-card">
+                                <div class="logo">
+                                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                        <circle cx="50" cy="50" r="45" fill="var(--primary)" />
+                                        <text x="50%" y="50%" text-anchor="middle" dominant-baseline="central"
+                                            font-size="40">🦕</text>
+                                    </svg>
+                                    <div class="brand-name">Register for Diagonal-Dinosaur</div>
+                                </div>
+                                <%- include('../components/register/registerInfo') %>
+                                    <%- include('../components/register/registerForm', { error: typeof error
+                                        !=='undefined' ? error : null }) %>
                             </div>
-
-                            <div class="info-text">
-                                <p>
-                                    This website is designed to view your personal board game statistics on the web.
-                                    This
-                                    service is self-hosted,
-                                    meaning that to use it you need to host it yourself. This can be done locally or on
-                                    a
-                                    server.
-                                </p>
-                                <p>
-                                    For more information on how to set up your own instance, please refer to
-                                    <a href="https://github.com/oldmartijntje/board-game-statistics"
-                                        target="_blank">this
-                                        guide</a>
-                                    on how to host your own.
-                                </p>
-                                <p>
-                                    Is this already your hosted version but you didn't register your account yet? The
-                                    step
-                                    of creating an account is mentioned in <a
-                                        href="https://github.com/oldmartijntje/board-game-statistics"
-                                        target="_blank">the
-                                        setup
-                                        guide.</a> This is also the place where you should look when you forgot your
-                                    password.
-                                </p>
-                            </div>
-
-                            <div class="text-center">
-                                <a href="/" class="btn btn-primary">Back to Login</a>
-                            </div>
-                        </div>
+                            <% } else if (mode==='closed' ) { %>
+                                <%- include('../components/register/registerClosed') %>
+                                    <% } else { %>
+                                        <div class="site-card info-card">
+                                            <div class="logo">
+                                                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                                    <circle cx="50" cy="50" r="45" fill="var(--primary)" />
+                                                    <text x="50%" y="50%" text-anchor="middle"
+                                                        dominant-baseline="central" font-size="40">🦕</text>
+                                                </svg>
+                                                <div class="brand-name">Register for Diagonal-Dinosaur</div>
+                                            </div>
+                                            <%- include('../components/register/registerInfo') %>
+                                                <div class="text-center">
+                                                    <a href="/login" class="btn btn-primary">Back to Login</a>
+                                                </div>
+                                        </div>
+                                        <% } %>
                     </div>
                 </div>
             </div>
@@ -63,6 +52,7 @@
 
         <script src="/helperMethods.js"></script>
         <script src="/loginscript.js"></script>
+        <script src="/registerScript.js"></script>
 
         <%- include('../components/technical/bootstrapAndTracking') %>
 </body>

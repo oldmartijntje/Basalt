@@ -1,15 +1,17 @@
 /* Universal Styles for OldMartijntje's Game Statistics */
 
 :root {
-    --primary: #1f8246;
-    --secondary: #47a375;
-    --dark-bg: #121212;
-    --card-bg: #1e1e1e;
+    --primary: #a91e50;
+    /* EJS pink */
+    --secondary: #3178c6;
+    /* TypeScript blue */
+    --dark-bg: #181622;
+    --card-bg: #232136;
     --text-light: #f8f9fa;
-    --text-muted: #929292;
+    --text-muted: #b3b3b3;
     --border-color: #444;
-    --input-bg: #2d2d2d;
-    --input-focus-bg: #333;
+    --input-bg: #2d2d3a;
+    --input-focus-bg: #2a2540;
 }
 
 /* Base Styles */
@@ -22,23 +24,29 @@ body {
 }
 
 /* Navigation */
+
 .navbar {
-    background-color: #151515 !important;
+    background-color: var(--card-bg) !important;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
+
 .navbar-brand {
-    color: var(--secondary) !important;
-    font-weight: 600;
+    color: var(--primary) !important;
+    font-weight: 700;
+    letter-spacing: 1px;
 }
 
+
 .nav-link.active {
-    color: var(--secondary) !important;
-    font-weight: 600;
+    color: var(--primary) !important;
+    font-weight: 700;
 }
 
 .nav-link:hover {
     color: var(--secondary) !important;
+    background: rgba(49, 120, 198, 0.08);
+    border-radius: 4px;
 }
 
 /* Container for main content */
@@ -71,25 +79,31 @@ body {
     height: 80px;
 }
 
+
 .brand-name {
     font-size: 1.8rem;
     font-weight: 700;
     margin-top: 1rem;
-    color: var(--secondary);
+    color: var(--primary);
+    letter-spacing: 1px;
 }
 
 /* Button styles */
+
 .btn-primary {
     background-color: var(--primary);
     border-color: var(--primary);
+    color: #fff;
     padding: 10px;
     font-weight: 600;
+    transition: background 0.2s, border 0.2s;
 }
 
 .btn-primary:hover,
 .btn-primary:focus {
     background-color: var(--secondary);
     border-color: var(--secondary);
+    color: #fff;
 }
 
 /* Form elements */
@@ -100,10 +114,11 @@ body {
     padding: 12px;
 }
 
+
 .form-control:focus {
     background-color: var(--input-focus-bg);
-    border-color: var(--secondary);
-    box-shadow: 0 0 0 0.2rem rgba(71, 163, 117, 0.25);
+    border-color: var(--primary);
+    box-shadow: 0 0 0 0.2rem rgba(169, 30, 80, 0.25);
     color: var(--text-light);
 }
 
@@ -111,18 +126,22 @@ body {
     color: var(--text-muted);
 }
 
+
 .form-check-input:checked {
     background-color: var(--primary);
     border-color: var(--primary);
 }
 
 /* Link styles */
+
 a {
     color: var(--secondary);
     text-decoration: none;
+    transition: color 0.2s;
 }
 
 a:hover {
+    color: var(--primary);
     text-decoration: underline;
 }
 

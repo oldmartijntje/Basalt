@@ -6,6 +6,11 @@ It is focussed on security, you can make certain notes only show up whenever a u
 
 It will require a personal way to sync your obsidian markdown notes into mongodb, but I'll probably be making that as well in the future.
 
+This repo is built ontop of `diagonal-dinosaur`.
+
+# diagonal-dinosaur
+NodeTS EJS Mongodb webapp Template📋
+
 This requires you either one of the followig:
 - You run mongodb locally
 - You have mongodb self hosted
@@ -15,21 +20,25 @@ This requires you either one of the followig:
 
 Run `npm i` in the root folder, this installs all packages.
 
-Then we run `npm run setup` in that root folder, this gives you steps with thingss you have to walk through. My default local hosted mongodb conn string is `mongodb://localhost:27017/BG_STATS_WEB`, but my hosted conn string looks like `mongodb://<username>:<password>@<ipadress>:<port>`. Make sure you find your correct conn string.
+Then run `npm run setup` in that root folder. To learn more about the setup process and all available options, read [the setup documentation here](./documentation/SETUP_SCRIPT.md).
+
+## Request Logging
+
+By default, this application logs every incoming HTTP request (including IP, cookies, and headers) to daily log files under `root/logging/{year}/{month}/{day}.log`. You can disable this feature by running the setup in advanced mode and choosing to turn off logging.
 
 ## Running
 
 run `npx ts-node src/server.ts` to start the backend. The console will give you the port the front-end is on. This port can be changed via the `settings.json`
 
-### Creating the first account
+## Account AccessIdentifiers
 
-you need to login to be able to use this, and by default there will be no user. There is an `/api/login/register` endpoint to register a user, but this requires access to the console of the backend. When the backend is running, there will be a message in the console: `Admin key: b6866362-c4cd-48d4-bdf1-c0287b8fd6ad`. With this info we make the following request to the backend via HTTP POST to the `/api/login/register` endpoint:
-```json
-{
-    "username":"username",
-    "password":"password",
-    "registerSignupKey": "b6866362-c4cd-48d4-bdf1-c0287b8fd6ad"
-}
-```
+An account accessIdentifier defines rules what a user can access and what it can not access.
+Think of it like a clearance level, a user with level 2 can access more than a user with level 1.
 
-This will create a user. You can do this as many times as you'd like. This Admin key is generated on startup.
+But this system can have problems in some cases. 
+When you want to give your family and friends access to your website, but your friends should only be allowed to visit friends "stuff", 
+and family should only access family photos. This problem can't be solves with clearance levels.
+This is why we use accessIdentifiers: everyone with the accessIdentifier `friend` can visit page X, and everyone else cannot.
+
+By default, everything can be looked up with the accessIdentifier `#`, which is not registerable. 
+This will only be granted to the first user to sign up.
