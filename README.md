@@ -10,40 +10,11 @@ This requires you either one of the followig:
 
 Run `npm i` in the root folder, this installs all packages.
 
-Then we run `npm run setup` in that root folder, this gives you steps with things you have to walk through. 
-My default local hosted mongodb conn string is `mongodb://localhost:27017/DIAGONAL_DINOSAUR`, but my hosted conn string looks like `mongodb://<username>:<password>@<ipadress>:<port>`. 
-Make sure you find your correct conn string.
+Then run `npm run setup` in that root folder. To learn more about the setup process and all available options, read [the setup documentation here](./documentation/SETUP_SCRIPT.md).
 
-Here you can also select how you would like to register your accounts, there are 2 modes
+## Request Logging
 
-### 1. The POST Method
-
-This method is the original method.
-
-By default there will be no user. There is an `/api/login/register` endpoint to register a user, but this requires access to the console of the backend. When the backend is running, there will be a message in the console: `Admin key: b6866362-c4cd-48d4-bdf1-c0287b8fd6ad`. With this info we make the following request to the backend via HTTP POST to the `/api/login/register` endpoint:
-```json
-{
-    "username":"username",
-    "password":"password",
-    "registerSignupKey": "b6866362-c4cd-48d4-bdf1-c0287b8fd6ad"
-}
-```
-
-This will create a user. You can do this as many times as you'd like. This Admin key is generated on startup.
-
-### 2. Modern UI
-
-This method allows you to create users through the UI of the website, the register page.
-
-When you select this option, you'll get another option in the setup. 
-This is an option where you allow multiple account creations via the UI.
-All users created after the 1st will have a lower access level.
-
-When choosing this mode of registering users, you can still use the old way, but those accounts will all have a lower access level. (unless blocked.)
-
-### 3. the third method
-
-This method will be prompted after selecting 1 of the above, it will prompt you whether you want to create a default admin. If you only want 1 account registered, ever: choose method 2 with the option of single admin.
+By default, this application logs every incoming HTTP request (including IP, cookies, and headers) to daily log files under `root/logging/{year}/{month}/{day}.log`. You can disable this feature by running the setup in advanced mode and choosing to turn off logging.
 
 ## Running
 

@@ -62,14 +62,20 @@ async function promptAccountCreation() {
     }]);
     let alsoAllowPost = null;
     let unlimitedUserCreation = true;
+    const isAdvanced = global.__ADVANCED_SETUP__ === true;
     if (accountCreation === 'Modern UI') {
-        const { uiAccountCreation } = await inquirer.prompt([{
-            type: 'list',
-            name: 'uiAccountCreation',
-            message: 'Allow the (old) POST method for account creation as well?',
-            choices: ['ALLOW', 'DISABLE'],
-        }]);
-        alsoAllowPost = uiAccountCreation;
+        if (isAdvanced) {
+            const { uiAccountCreation } = await inquirer.prompt([{
+                type: 'list',
+                name: 'uiAccountCreation',
+                message: 'Allow the (old) POST method for account creation as well?',
+                choices: ['ALLOW', 'DISABLE'],
+                default: 'DISABLE'
+            }]);
+            alsoAllowPost = uiAccountCreation;
+        } else {
+            alsoAllowPost = 'DISABLE';
+        }
 
         const { unlimited } = await inquirer.prompt([{
             type: 'list',
@@ -118,6 +124,19 @@ async function promptAdminAccount() {
 
 async function main() {
     try {
+        // Ask for advanced setup
+        const { advanced } = await inquirer.prompt([
+            {
+                type: 'confirm',
+                name: 'advanced',
+                message: 'Run advanced setup?',
+                default: false
+            }
+        ]);
+
+        // Pass advanced mode to promptAccountCreation
+        global.__ADVANCED_SETUP__ = advanced;
+
         const finalUri = await promptDatabase();
         console.log('→ Final URI:', finalUri);
         const finalPort = await promptPort();
@@ -159,12 +178,24 @@ async function main() {
         }
 
         // settings.json
+        let logging = true;
+        if (advanced) {
+            const { enableLogging } = await inquirer.prompt([
+                {
+                    type: 'confirm',
+                    name: 'enableLogging',
+                    message: 'Enable request logging?',
+                    default: true
+                }
+            ]);
+            logging = enableLogging;
+        }
         const settings = {
             port: parseInt(finalPort, 10),
             accountCreationMethod: accountSettings.accountCreation === 'POST Method' ? 'POST' : 'GUI',
             alsoAllowPostAccountCreation: accountSettings.alsoAllowPost ?? null,
             unlimitedUserCreation: accountSettings.unlimitedUserCreation ?? true,
-            logging: true
+            logging
         };
         fs.writeFileSync(
             path.resolve(process.cwd(), 'settings.json'),
