@@ -105,7 +105,14 @@ function registerPages(app: express.Express) {
         // Fallback: info
         return res.render('pages/register', { mode: 'info', title: 'Register' });
     });
-    registerEJS(app, 'pages/dashboard', '/dashboard', { title: 'Dashboard' });
+    // Redirect /dashboard to /dashboard/home
+    app.get('/dashboard', (req, res) => {
+        res.redirect('/dashboard/home');
+    });
+    // Main dashboard shell (EJS)
+    registerEJS(app, 'pages/dashboard', '/dashboard/home', { title: 'Dashboard' });
+    registerEJS(app, 'pages/dashboard', '/dashboard/template', { title: 'Dashboard' });
+    registerEJS(app, 'pages/dashboard', '/dashboard/users', { title: 'Dashboard' });
     registerEJS(app, 'pages/register-success', '/register-success', { title: 'Account Created' });
 
     // Dashboard tab content routes (for SPA sidebar)
