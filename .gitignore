@@ -1,4 +1,5 @@
 node_modules
+settings.json
 .env
 .testData/
 # Grunt intermediate storage (https://gruntjs.com/creating-plugins#storing-task-files)
