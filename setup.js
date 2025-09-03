@@ -163,7 +163,8 @@ async function main() {
             port: parseInt(finalPort, 10),
             accountCreationMethod: accountSettings.accountCreation === 'POST Method' ? 'POST' : 'GUI',
             alsoAllowPostAccountCreation: accountSettings.alsoAllowPost ?? null,
-            unlimitedUserCreation: accountSettings.unlimitedUserCreation ?? true
+            unlimitedUserCreation: accountSettings.unlimitedUserCreation ?? true,
+            logging: true
         };
         fs.writeFileSync(
             path.resolve(process.cwd(), 'settings.json'),

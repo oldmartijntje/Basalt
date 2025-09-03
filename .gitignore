@@ -1,4 +1,5 @@
 node_modules
+logging/
 settings.json
 .env
 .testData/
