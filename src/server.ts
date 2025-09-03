@@ -106,6 +106,7 @@ function registerPages(app: express.Express) {
         return res.render('pages/register', { mode: 'info', title: 'Register' });
     });
     registerEJS(app, 'pages/dashboard', '/dashboard', { title: 'Dashboard' });
+    registerEJS(app, 'pages/register-success', '/register-success', { title: 'Account Created' });
 }
 
 function registerEJS(app: express.Express, folderPath: string, browserPath: string, options?: object) {
