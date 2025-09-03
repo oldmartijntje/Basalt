@@ -3,7 +3,7 @@ let passwordField = document.getElementById('password')
 let loginHeaderNav = document.getElementById('loginOrAccountNav')
 let errorLoginText = document.getElementById('errorLoginText')
 let rememberMe = document.getElementById('rememberMe')
-let data = localStorage.getItem("oldma_game_stats")
+let data = localStorage.getItem("diagonal_dinosaur_user")
 let tryLogin = false;
 let username = null;
 let refreshToken = null;
@@ -59,15 +59,15 @@ if (tryLogin) {
                             token: content2.sessionToken,
                             refreshToken: content2.refreshToken
                         };
-                        localStorage.setItem("oldma_game_stats", JSON.stringify(data));
+                        localStorage.setItem("diagonal_dinosaur_user", JSON.stringify(data));
                         authenticatedUser = true;
                         setHeaderText();
                     } else {
-                        localStorage.removeItem("oldma_game_stats");
+                        localStorage.removeItem("diagonal_dinosaur_user");
                     }
                 });
             } else {
-                localStorage.removeItem("oldma_game_stats");
+                localStorage.removeItem("diagonal_dinosaur_user");
             }
         }
     });
