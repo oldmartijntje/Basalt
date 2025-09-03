@@ -43,6 +43,20 @@
                 const res = await fetch(path + '-content');
                 const html = await res.text();
                 content.innerHTML = html;
+                // Execute embedded scripts in loaded HTML
+                Array.from(content.querySelectorAll('script')).forEach(oldScript => {
+                    const newScript = document.createElement('script');
+                    if (oldScript.src) {
+                        newScript.src = oldScript.src;
+                    } else {
+                        newScript.textContent = oldScript.textContent;
+                    }
+                    // Copy attributes
+                    Array.from(oldScript.attributes).forEach(attr => {
+                        newScript.setAttribute(attr.name, attr.value);
+                    });
+                    oldScript.replaceWith(newScript);
+                });
                 if (pushState) history.pushState(null, '', path);
             }
             document.querySelectorAll('.sidebar-link').forEach(link => {
