@@ -9,30 +9,111 @@
     <%- include('../components/default/header') %>
 
 
-        <div class="main-container">
-            <div class="container">
-                <div class="row justify-content-center">
-                    <div class="col-12">
-                        <div class="site-card info-card">
-                            <div class="logo">
-                                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                                    <circle cx="50" cy="50" r="45" fill="var(--primary)" />
-                                    <text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" font-size="40">🦕</text>
-                                </svg>
-                                <div class="brand-name">Dashboard</div>
-                            </div>
-                            <div class="info-text">
-                                <h2>Welcome to your Diagonal-Dinosaur Dashboard</h2>
-                                <p>
-                                    This is your personal space. Extend this dashboard with your own features and data views.<br>
-                                    The login system is already built in, so you can focus on your content!
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="dashboard-app">
+            <aside class="dashboard-sidebar">
+                <div class="sidebar-header">🦕 Dashboard</div>
+                <ul class="sidebar-list">
+                    <li class="sidebar-item active" data-tab="home">
+                        <span>home.ejs</span>
+                    </li>
+                    <li class="sidebar-item" data-tab="template">
+                        <span>template.ejs</span>
+                    </li>
+                    <li class="sidebar-item" data-tab="users">
+                        <span>users.ejs</span>
+                    </li>
+                </ul>
+            </aside>
+            <main class="dashboard-main-content" id="dashboard-content">
+                <!-- Content will be loaded here -->
+            </main>
         </div>
+        <script>
+            // Simple SPA-like tab switching
+            const tabs = document.querySelectorAll('.sidebar-item');
+            const content = document.getElementById('dashboard-content');
+            const tabFiles = {
+                home: '/views/pages/dashboardHome.ejs',
+                template: '/views/pages/dashboardTemplate.ejs',
+                users: '/views/pages/dashboardUsers.ejs'
+            };
+            async function loadTab(tab) {
+                let url;
+                switch (tab) {
+                    case 'home': url = '/dashboard/home-content'; break;
+                    case 'template': url = '/dashboard/template-content'; break;
+                    case 'users': url = '/dashboard/users-content'; break;
+                    default: url = '/dashboard/home-content';
+                }
+                const res = await fetch(url);
+                const html = await res.text();
+                content.innerHTML = html;
+            }
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function () {
+                    document.querySelector('.sidebar-item.active').classList.remove('active');
+                    tab.classList.add('active');
+                    loadTab(tab.dataset.tab);
+                });
+            });
+            // Initial load
+            loadTab('home');
+        </script>
+        <style>
+            .dashboard-app {
+                display: flex;
+                flex-grow: 1;
+                min-height: 0;
+                background: #1e1e1e;
+                color: #d4d4d4;
+                font-family: 'Segoe UI', 'Fira Mono', monospace;
+                border-radius: 8px;
+                overflow: hidden;
+            }
+            .dashboard-sidebar {
+                width: 220px;
+                background: #252526;
+                padding: 1em 0;
+                display: flex;
+                flex-direction: column;
+            }
+            .sidebar-header {
+                font-weight: bold;
+                font-size: 1.2em;
+                padding: 0.5em 1em;
+                border-bottom: 1px solid #333;
+            }
+            .sidebar-list {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+            }
+            .sidebar-item {
+                padding: 0.7em 1.5em;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                border-left: 3px solid transparent;
+                transition: background 0.2s;
+            }
+            .sidebar-item.active {
+                background: #37373d;
+                border-left: 3px solid #007acc;
+                color: #fff;
+            }
+            .sidebar-item:hover {
+                background: #2c2c32;
+            }
+            .sidebar-item span {
+                margin-left: 0.5em;
+            }
+            .dashboard-main-content {
+                flex: 1;
+                padding: 2em;
+                background: #1e1e1e;
+                overflow-y: auto;
+            }
+        </style>
         <script src="/helperMethods.js"></script>
         <%- include('../components/technical/bootstrapAndTracking') %>
 </body>

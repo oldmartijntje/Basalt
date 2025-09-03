@@ -107,6 +107,17 @@ function registerPages(app: express.Express) {
     });
     registerEJS(app, 'pages/dashboard', '/dashboard', { title: 'Dashboard' });
     registerEJS(app, 'pages/register-success', '/register-success', { title: 'Account Created' });
+
+    // Dashboard tab content routes (for SPA sidebar)
+    app.get('/dashboard/home-content', (req, res) => {
+        res.render('pages/dashboardHome');
+    });
+    app.get('/dashboard/template-content', (req, res) => {
+        res.render('pages/dashboardTemplate');
+    });
+    app.get('/dashboard/users-content', (req, res) => {
+        res.render('pages/dashboardUsers');
+    });
 }
 
 function registerEJS(app: express.Express, folderPath: string, browserPath: string, options?: object) {
