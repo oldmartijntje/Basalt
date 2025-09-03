@@ -74,7 +74,37 @@ main().then(async () => {
 function registerPages(app: express.Express) {
     registerEJS(app, 'pages/index', '/', { title: 'Home' });
     registerEJS(app, 'pages/login', '/login', { title: 'Login' });
-    registerEJS(app, 'pages/register', '/register', { title: 'Register' });
+    // Custom register route logic
+    app.get('/register', async (req, res) => {
+        const settings = require('../settings.json');
+        const { accountCreationMethod, unlimitedUserCreation } = settings;
+        let userCount = 0;
+        try {
+            const { users } = require('./mainDatabase');
+            userCount = await users.countDocuments({});
+        } catch (err) {
+            userCount = 0;
+        }
+        if (accountCreationMethod === 'POST') {
+            // Show info only, no registration form
+            return res.render('pages/register', { mode: 'info', title: 'Register' });
+        }
+        if (accountCreationMethod === 'GUI' && unlimitedUserCreation === false) {
+            if (userCount === 0) {
+                // Show registration form
+                return res.render('pages/register', { mode: 'form', title: 'Register' });
+            } else {
+                // Registration closed
+                return res.render('pages/register', { mode: 'closed', title: 'Register' });
+            }
+        }
+        if (accountCreationMethod === 'GUI' && unlimitedUserCreation === true) {
+            // Always show registration form
+            return res.render('pages/register', { mode: 'form', title: 'Register' });
+        }
+        // Fallback: info
+        return res.render('pages/register', { mode: 'info', title: 'Register' });
+    });
     registerEJS(app, 'pages/dashboard', '/dashboard', { title: 'Dashboard' });
 }
 
