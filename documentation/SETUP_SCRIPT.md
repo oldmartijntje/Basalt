@@ -1,6 +1,6 @@
 # Setup Script Guide
 
-This document explains the setup script for the diagonal-dinosaur project, including all available options and modes.
+This document explains the setup script for the diagonal-dinosaur project (the parent of BasaltMD), including all available options and modes.
 
 ## Running the Setup
 
@@ -19,7 +19,7 @@ When you start the setup, you will be asked:
 ## Database Connection
 
 You can select your MongoDB connection string:
-- Use the default: `mongodb://localhost:27017/DIAGONAL_DINOSAUR`
+- Use the default: `mongodb://localhost:27017/BasaltMD`
 - Enter a custom URI
 
 Please note that when your database is protected by credentials, that those should be added. `mongodb://<username>:<password>@<ipadress>:<port>/<DATABASE NAME>`. 

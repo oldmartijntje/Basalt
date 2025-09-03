@@ -5,7 +5,7 @@ import path from 'path';
 import inquirer from 'inquirer';
 import bcrypt from 'bcrypt';
 
-const DEFAULT_URI = 'mongodb://localhost:27017/DIAGONAL_DINOSAUR';
+const DEFAULT_URI = 'mongodb://localhost:27017/BasaltMD';
 
 
 async function promptDatabase() {

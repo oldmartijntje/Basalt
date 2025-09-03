@@ -3,7 +3,7 @@ let passwordField = document.getElementById('password')
 let loginHeaderNav = document.getElementById('loginOrAccountNav')
 let errorLoginText = document.getElementById('errorLoginText')
 let rememberMe = document.getElementById('rememberMe')
-let data = localStorage.getItem("diagonal_dinosaur_user")
+let data = localStorage.getItem("basalt_md_user")
 let tryLogin = false;
 let username = null;
 let refreshToken = null;
@@ -59,15 +59,15 @@ if (tryLogin) {
                             token: content2.sessionToken,
                             refreshToken: content2.refreshToken
                         };
-                        localStorage.setItem("diagonal_dinosaur_user", JSON.stringify(data));
+                        localStorage.setItem("basalt_md_user", JSON.stringify(data));
                         authenticatedUser = true;
                         setHeaderText();
                     } else {
-                        localStorage.removeItem("diagonal_dinosaur_user");
+                        localStorage.removeItem("basalt_md_user");
                     }
                 });
             } else {
-                localStorage.removeItem("diagonal_dinosaur_user");
+                localStorage.removeItem("basalt_md_user");
             }
         }
     });
