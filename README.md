@@ -18,7 +18,7 @@ By default, this application logs every incoming HTTP request (including IP, coo
 
 ## Running
 
-run `npx ts-node src/server.ts` to start the backend. The console will give you the port the front-end is on. This port can be changed via the `settings.json`
+run `npm run start` to start the backend. The console will give you the port the front-end is on. This port can be changed via the `settings.json`
 
 ## Account AccessIdentifiers
 

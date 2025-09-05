@@ -16,6 +16,7 @@ userSchema.pre('save', async function (next) {
 export const users = mongoose.model('user', userSchema);
 
 export async function connectToDatabase(uri: string) {
+    console.log(`Loading settings...`);
     const mongoose = require('mongoose');
     await mongoose.connect(uri);
 } 

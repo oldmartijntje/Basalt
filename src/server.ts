@@ -37,6 +37,7 @@ async function loadSettings(settingsPath: string) {
 }
 
 async function main() {
+    console.log(`Loading settings...`);
     const settings = await loadSettings('settings.json');
 
     if (!settings) {
