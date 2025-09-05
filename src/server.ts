@@ -1,3 +1,4 @@
+import { requestLogger } from './requestLogger';
 import * as dotenv from "dotenv";
 import cors from "cors";
 import path from 'path';
@@ -38,6 +39,7 @@ async function loadSettings(settingsPath: string) {
 }
 
 async function main() {
+    console.log(`Loading settings...`);
     const settings = await loadSettings('settings.json');
 
     if (!settings) {
@@ -66,7 +68,6 @@ main().then(async () => {
         app.set('views', path.join(__dirname, '../views'));
 
         if (settings.logging != false) {
-            const { requestLogger } = require('./requestLogger');
             app.use(requestLogger);
         }
 
